@@ -38,7 +38,7 @@ RUN composer install --no-scripts --no-autoloader
 COPY . .
 
 # Generate the Laravel application key
-RUN php artisan key:generate
+# RUN php artisan key:generate
 
 # Optimize Laravel for production
 RUN composer dump-autoload --optimize
