@@ -1,44 +1,36 @@
-# Use the official PHP image as the base image
-FROM php:7.4-fpm
+FROM php:8.1.2-fpm
 
-# Set the working directory inside the container
-WORKDIR /var/www/html
+COPY composer.lock composer.json /var/www/
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
     libzip-dev \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
     zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
     curl \
-    libonig-dev \
-    libxml2-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql mbstring zip exif pcntl bcmath opcache
+    libcurl4-openssl-dev \
+    pkg-config \
+    libssl-dev \
+    software-properties-common \
+    npm \
+    && docker-php-ext-configure gd \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install mysqli \
+    && docker-php-ext-install zip \
+    && docker-php-source delete
 
-# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copy composer files and install dependencies
-COPY composer.json composer.lock ./
+WORKDIR /app
 
-# Copy the rest of the application code
 COPY . .
 
-# Generate the Laravel application key
-RUN php artisan key:generate
-
-# Optimize Laravel for production
-RUN composer dump-autoload --optimize
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
-
-# Expose port 9000 to the outside world
-EXPOSE 9000
-
-# Run PHP-FPM
-CMD ["php-fpm"]
+CMD php artisan serve --host=0.0.0.0
