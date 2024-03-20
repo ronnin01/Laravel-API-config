@@ -29,9 +29,6 @@ switch(env("APP_ENV")) {
             'http://localhost:3003'
         ];
         break;
-    default:
-        $allowed_origins = [];
-        break;
 }
 
 return [
