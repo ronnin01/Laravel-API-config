@@ -1,5 +1,5 @@
 # Use the official PHP 8 image
-FROM php:8
+FROM php:8 as development
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -19,6 +19,10 @@ WORKDIR /var/www/html
 
 # Copy the application files to the container
 COPY . .
+
+FROM php:8-fpm-alpine
+
+COPY --from: development /var/www/html /var/www/html
 
 # Install composer and dependencies
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
