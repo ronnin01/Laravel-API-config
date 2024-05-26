@@ -1,9 +1,9 @@
 pipeline {
   agent any
   stages {
-    stage('Checkout Code') {
+    stage('') {
       steps {
-        git(url: 'https://github.com/ronnin01/Laravel-API-config.git', branch: 'master')
+        git(url: 'https://github.com/ronnin01/Vue-Portfolio', branch: 'master')
       }
     }
 
